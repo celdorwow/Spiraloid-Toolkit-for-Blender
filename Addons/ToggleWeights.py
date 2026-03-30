@@ -1,39 +1,22 @@
 bl_info = {
         'name': 'ToggleDefaultWeights',
         'author': 'bay raitt',
-        'version': (0, 1),
-        'blender': (2, 80, 0),
+        'version': (0, 2),
+        'blender': (5, 0, 0),
         'category': 'View',
         'location': 'View > Weights > Toggle Default Weights',
         'wiki_url': ''}
 
+
 import bpy
 
 
-isWeightToggled = True
-
-
 def main(context):
-    global isWeightToggled
-    
-    if not isWeightToggled:
-        bpy.context.scene.tool_settings.unified_paint_settings.weight = 0
-        for b in bpy.data.brushes:
-            b_name = b.name
-            bpy.data.brushes[b_name].weight = 0
-            # bpy.data.brushes['Brush'].weight = 0
+    for b in bpy.data.brushes:
+        w = bpy.data.brushes[b.name].weight
+        bpy.data.brushes[b.name].weight = 1.0 - w
 
-  
-    if isWeightToggled:    
-        bpy.context.scene.tool_settings.unified_paint_settings.weight = 1
-        for b in bpy.data.brushes:
-            b_name = b.name
-            bpy.data.brushes[b_name].weight = 1
-        # bpy.data.brushes['Brush'].weight = 1
 
-        
-    isWeightToggled = not isWeightToggled
-                
 class BR_OT_toggle_weights(bpy.types.Operator):
     """Toggle Default Weights"""
     bl_idname = "view3d.toggle_default_weights"
@@ -48,10 +31,10 @@ def menu_draw(self, context):
     self.layout.operator(BR_OT_toggle_weights.bl_idname)
 
 
-
 def register():
     bpy.utils.register_class(BR_OT_toggle_weights)
     bpy.types.VIEW3D_MT_paint_weight.prepend(menu_draw)  
+
 
 def unregister():
     bpy.utils.unregister_class(BR_OT_toggle_weights)
@@ -60,6 +43,6 @@ def unregister():
     if __name__ != "__main__":
         bpy.types.VIEW3D_MT_paint_weight.remove(menu_draw)
 
+
 if __name__ == "__main__":
     register()
-
